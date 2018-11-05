@@ -3,45 +3,29 @@
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
 
-#include<iostream>
 #include "stmt.hpp"
-#include "printer.hpp"
 
-// Print functions
-
-static void printBlock(Printer& p, blockStmt const* s){
-    p.getStream() << '{';
-    p.printNewLine();
-    p.indent();
-    print(p, s);
-    p.printNewLine();
-    p.getStream() << '}';
-}
-
-static void printExpression(Printer& p, exprStmt const* s){
-    print(p, s);
-}
-
-static void printReturn(Printer& p, returnStmt const* s){
-    p.getStream() << "return ";
-    print(p, s);
-}
-
-void print(Printer& p, Stmt const* s){
-    switch (s->getStatement()) {
-        case Stmt::myBlock :
-            return printBlock(p, static_cast<blockStmt const*>(s));
-        case Stmt::myExpression :
-            return printExpression(p, static_cast<exprStmt const*>(s));
-        case Stmt::myReturn :
-            return printReturn(p, static_cast<returnStmt const*>(s));
-        default:
-            break;
+char const* Stmt::getStmtName() const {
+    switch (myKind) {
+        case mySkipStmt:
+            return "skip statement";
+        case myBlockStmt:
+            return "block statement";
+        case myIfStmt:
+            return "if statement";
+        case myWhileStmt:
+            return "while statement";
+        case myBreakStmt:
+            return "break statement";
+        case myContStmt:
+            return "continue statement";
+        case myRetStmt:
+            return "return statement";
+        case myExprStmt:
+            return "expression statement";
+        case myDeclStmt:
+            return "declaration statement";
     }
+    assert(false);
 }
 
-std::ostream& operator<<(std::ostream& os, Stmt const& s){
-    Printer p(os);
-    print(p, &s);
-    return os;
-}

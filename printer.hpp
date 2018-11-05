@@ -3,6 +3,8 @@
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
 
+#pragma once
+
 #include <iosfwd>
 
 // Printer class not described in instructions
@@ -23,7 +25,7 @@ public:
     void indent() { ++myIndent; }
     void undent() { --myIndent; }
     void printIndentation();
-    void printNewLine();
+    void printNewline();
     void printString(char const* str);
     void printAddress(void const* ptr);
 };
@@ -42,3 +44,19 @@ private:
 inline PrintIndented::PrintIndented(Printer& p) :
     myPrinter(p) { myPrinter.indent(); }
 inline PrintIndented::~PrintIndented() { myPrinter.undent(); }
+
+// Print class for last newline
+class PrintFinalNewline {
+public:
+    PrintFinalNewline(Printer& p);
+    ~PrintFinalNewline();
+
+private:
+    Printer& myPrinter;
+};
+inline PrintFinalNewline::PrintFinalNewline(Printer& p) :
+    myPrinter(p) {}
+inline PrintFinalNewline::~PrintFinalNewline() {
+  myPrinter.printNewline();
+}
+

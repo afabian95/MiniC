@@ -11,7 +11,7 @@ void Printer::printIndentation() {
         myOstream << " ";
 }
 
-void Printer::printNewLine() {
+void Printer::printNewline() {
     myOstream << "\n";
 }
 

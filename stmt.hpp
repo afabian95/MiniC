@@ -3,7 +3,13 @@
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
 
+#pragma once
+
+#include "tree.hpp"
+#include "value.hpp"
+
 class Expr;
+class Decl;
 class Printer;
 
 // The general statement class
@@ -11,14 +17,15 @@ class Stmt {
 public:
     // Kinds of statements
     enum Kind{
-        myBreak,
-        myContinue,
-        myBlock,
-        myWhile,
-        myIf,
-        myReturn,
-        myExpression,
-        myDeclaration,
+        mySkipStmt,
+        myBreakStmt,
+        myContStmt,
+        myBlockStmt,
+        myWhileStmt,
+        myIfStmt,
+        myRetStmt,
+        myExprStmt,
+        myDeclStmt,
     };
 
 protected:
@@ -28,7 +35,8 @@ private:
     Kind myKind;
 
 public:
-    Kind getStatement() const { return myKind; }
+    Kind getStmtKind() const { return myKind; }
+    char const* getStmtName() const;
 };
 inline Stmt::Stmt(Kind k) :
     myKind(k) {}
@@ -74,14 +82,24 @@ protected:
 private:
     Stmt* const* firstOp;
     Stmt* const* lastOp;
+    std::initializer_list<Stmt*> allOps;
 public:
     Stmt* const* getFirst() const { return firstOp; }
     Stmt* const* getLast() const { return lastOp; }
+    std::initializer_list<Stmt*> getChildren() const { return allOps;}
 };
 inline knaryStmt::knaryStmt(Kind k, std::initializer_list<Stmt*> ops) :
-    Stmt(k), firstOp(ops.begin()), lastOp(ops.end()) {}
+    Stmt(k), firstOp(ops.begin()), lastOp(ops.end()), allOps(ops) {}
 
 // Statements
+
+// Skip statement
+class skipStmt : public nullaryStmt {
+public:
+    skipStmt();
+};
+inline skipStmt::skipStmt() :
+    nullaryStmt(mySkipStmt) {}
 
 // Break statement
 class breakStmt : public nullaryStmt {
@@ -89,7 +107,7 @@ public:
     breakStmt();
 };
 inline breakStmt::breakStmt() :
-    nullaryStmt(myBreak) {}
+    nullaryStmt(myBreakStmt) {}
 
 // Continue statement
 class contStmt : public nullaryStmt {
@@ -97,7 +115,7 @@ public:
     contStmt();
 };
 inline contStmt::contStmt() :
-    nullaryStmt(myContinue) {}
+    nullaryStmt(myContStmt) {}
 
 // Block statement
 class blockStmt : public knaryStmt {
@@ -105,7 +123,7 @@ public:
     blockStmt(std::initializer_list<Stmt*> ops);
 };
 inline blockStmt::blockStmt(std::initializer_list<Stmt*> ops) :
-    knaryStmt(myBlock, ops) {}
+    knaryStmt(myBlockStmt, ops) {}
 
 // While statement
 class whileStmt : public unaryStmt {
@@ -117,7 +135,7 @@ public:
     Stmt* getBody() const { return getChild(); }
 };
 inline whileStmt::whileStmt(Expr* e, Stmt* s) :
-    unaryStmt(myWhile, s), myCond(e) {}
+    unaryStmt(myWhileStmt, s), myCond(e) {}
 
 // If statement
 class ifStmt : public binaryStmt {
@@ -130,7 +148,7 @@ public:
     Stmt* getFalse() const { return getSecond(); }
 };
 inline ifStmt::ifStmt(Expr* e, Stmt* s1, Stmt* s2) :
-    binaryStmt(myIf, s1, s2) {}
+    binaryStmt(myIfStmt, s1, s2) {}
 
 // Return statement
 class returnStmt : public nullaryStmt {
@@ -141,7 +159,7 @@ public:
     Expr* getReturn() const { return myRet; }
 };
 inline returnStmt::returnStmt(Expr* e) :
-    nullaryStmt(myReturn), myRet(e) {}
+    nullaryStmt(myRetStmt), myRet(e) {}
 
 // Expression statement
 class exprStmt : public nullaryStmt {
@@ -152,7 +170,7 @@ public:
     Expr* getExpression() const { return myExpr; }
 };
 inline exprStmt::exprStmt(Expr* e) :
-    nullaryStmt(myExpression), myExpr(e) {}
+    nullaryStmt(myExprStmt), myExpr(e) {}
 
 // Declaration statement
 class declStmt : public nullaryStmt {
@@ -163,9 +181,10 @@ public:
     Expr* getDeclaration() const { return myDecl; }
 };
 inline declStmt::declStmt(Expr* e) :
-    nullaryStmt(myDeclaration), myDecl(e) {}
+    nullaryStmt(myDeclStmt), myDecl(e) {}
 
 //Operations
-void print(Printer& p, Stmt const* s);
+void printStmt(Printer& p, Stmt const* s);
 
-std::ostream& operator<<(std::ostream& os, Stmt const* s);
+std::ostream& operator<<(std::ostream& os, Stmt const& s);
+
