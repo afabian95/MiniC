@@ -124,10 +124,10 @@ public:
     funcType(std::vector<Type*> const& ops);
     funcType(std::vector<Type*>&& ops);
     std::size_t getParamCount() const { return getLast() - getFirst(); }
-    NodeRange<Type> getParameterTypes();
+    NodeRange<Type> getParameterTypes() { return {}; };
     NodeRange<Type const> getParameterTypes() const;
-    Type* getReturnType();
-    Type const* getReturnType() const;
+    Type* getReturnType() { return {}; }
+    Type const* getReturnType() const { return nullptr; };
 
 };
 inline funcType::funcType(std::initializer_list<Type*> ops) :

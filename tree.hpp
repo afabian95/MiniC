@@ -20,6 +20,7 @@ private:
 
 public:
     using iterator = T**;
+    NodeRange() : myFirst(), myLast() { }
     NodeRange(T** first, T** last) : myFirst(first), myLast(last) { }
     bool isEmpty() const { return myFirst == myLast; }
     std::size_t getSize() const { return myLast - myFirst; }

@@ -276,11 +276,11 @@ inline subExpr::subExpr(Type* t, Expr* e1, Expr* e2) :
     binaryExpr(mySubExpr, t, e1, e2) {}
 
 // The multiplication expression
-class mulExpr : public binaryExpr {
+class multExpr : public binaryExpr {
 public:
-    mulExpr(Type* t, Expr* e1, Expr* e2);
+    multExpr(Type* t, Expr* e1, Expr* e2);
 };
-inline mulExpr::mulExpr(Type* t, Expr* e1, Expr* e2) :
+inline multExpr::multExpr(Type* t, Expr* e1, Expr* e2) :
     binaryExpr(myMultExpr, t, e1, e2) {}
 
 // The division quotient expression

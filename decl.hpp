@@ -103,7 +103,7 @@ inline valDecl::valDecl(Name* n, Type* t) :
 
 // For variable declarations (objects and references)
 class varDecl : public nullaryDecl, public valDecl {
-protected:
+public:
     varDecl(Name* n, Type* t);
 private:
     Expr* myInit;

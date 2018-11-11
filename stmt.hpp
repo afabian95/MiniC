@@ -175,13 +175,13 @@ inline exprStmt::exprStmt(Expr* e) :
 // Declaration statement
 class declStmt : public nullaryStmt {
 private:
-    Expr* myDecl;
+    Decl* myDecl;
 public:
-    declStmt(Expr* e);
-    Expr* getDeclaration() const { return myDecl; }
+    declStmt(Decl* d);
+    Decl* getDeclaration() const { return myDecl; }
 };
-inline declStmt::declStmt(Expr* e) :
-    nullaryStmt(myDeclStmt), myDecl(e) {}
+inline declStmt::declStmt(Decl* d) :
+    nullaryStmt(myDeclStmt), myDecl(d) {}
 
 //Operations
 void printStmt(Printer& p, Stmt const* s);
