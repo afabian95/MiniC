@@ -40,8 +40,8 @@ static bool isSameRef(refType const* refOne, refType const* refTwo) {
 }
 
 static bool isSameFunc(funcType const* funcOne, funcType const* funcTwo) {
-    return std::equal(funcOne->getFirst(), funcOne->getLast(),
-                      funcTwo->getFirst(), funcTwo->getLast(), isSame);
+    return std::equal(funcOne->begin(), funcOne->end(),
+                      funcTwo->begin(), funcTwo->end(), isSame);
 }
 
 // Function to determine if two values have the same type

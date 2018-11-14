@@ -109,20 +109,32 @@ inline ternaryExpr::ternaryExpr(Kind k, Type* t, Expr* op1, Expr* op2, Expr* op3
     Expr(k, t), firstOp(op1), secondOp(op2), thirdOp(op3) {}
 
 // For expressions with k operands
-class knaryExpr : public Expr {
+class karyExpr : public Expr {
 protected:
-    knaryExpr(Kind k, Type* t, std::initializer_list<Expr*> ops);
+    karyExpr(Kind k, Type* t);
+    karyExpr(Kind k, Type* t, std::initializer_list<Expr*> list);
+    karyExpr(Kind k, Type* t, std::vector<Expr*> const& vec);
+    karyExpr(Kind k, Type* t, std::vector<Expr*>&& vec);
+
 private:
-    Expr* const* firstOp;
-    Expr* const* lastOp;
-    std::initializer_list<Expr*> allOps;
+    std::vector<Expr*> myOps;
+
 public:
-    Expr* const* getFirst() const { return firstOp; }
-    Expr* const* getLast() const { return lastOp; }
-    std::initializer_list<Expr*> getChildren() const { return allOps; }
+    Expr** begin() { return myOps.data(); }
+    Expr** end() { return myOps.data() + myOps.size(); }
+    Expr* const* begin() const { return myOps.data(); }
+    Expr* const* end() const { return myOps.data() + myOps.size(); }
+    NodeRange<Expr> getChildren() { return { begin(), end()}; }
+    NodeRange<Expr const> getChildren() const { return { begin(), end()}; }
 };
-inline knaryExpr::knaryExpr(Kind k, Type* t, std::initializer_list<Expr*> ops) :
-    Expr(k, t), firstOp(ops.begin()), lastOp(ops.end()), allOps(ops) {}
+inline karyExpr::karyExpr(Kind k, Type* t) :
+    Expr(k, t) {}
+inline karyExpr::karyExpr(Kind k, Type* t, std::initializer_list<Expr*> list) :
+    Expr(k, t), myOps(list) {}
+inline karyExpr::karyExpr(Kind k, Type* t, std::vector<Expr*> const& vec) :
+    Expr(k, t), myOps(vec) {}
+inline karyExpr::karyExpr(Kind k, Type* t, std::vector<Expr*>&& vec) :
+    Expr(k, t), myOps(std::move(vec)) {}
 
 // For literal expressions
 class literalExpr : public nullaryExpr {
@@ -326,12 +338,23 @@ inline assignExpr::assignExpr(Type* t, Expr* e1, Expr* e2) :
 // Functions
 
 // The call expression
-class callExpr : public knaryExpr {
+class callExpr : public karyExpr {
 public:
-    callExpr(Type* t, std::initializer_list<Expr*> args);
+    callExpr(Type* t, std::initializer_list<Expr*> list);
+    callExpr(Type* t, std::vector<Expr*> const& vec);
+    callExpr(Type* t, std::vector<Expr*>&& vec);
+    Expr* getFunction() { return getChildren().getFront(); }
+    Expr const* getFunction() const { return getChildren().getFront(); }
+    NodeRange<Expr> getArguments() { return getChildren().getTail(); }
+    NodeRange<Expr const> getArguments() const { return getChildren().getTail(); }
 };
-inline callExpr::callExpr(Type* t, std::initializer_list<Expr*> args) :
-    knaryExpr(myCallExpr, t, args) {}
+inline callExpr::callExpr(Type* t, std::initializer_list<Expr*> list) :
+    karyExpr(myCallExpr, t, list) {}
+inline callExpr::callExpr(Type* t, std::vector<Expr*> const& vec) :
+    karyExpr(myCallExpr, t, vec) {}
+inline callExpr::callExpr(Type* t, std::vector<Expr*>&& vec) :
+    karyExpr(myCallExpr, t, std::move(vec)) {}
+
 
 // The value conversion expression
 class valConv : public unaryExpr {

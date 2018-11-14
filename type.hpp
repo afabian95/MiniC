@@ -67,20 +67,32 @@ inline unaryType::unaryType(Kind k, Type* op) :
     Type(k), myOp(op) {}
 
 // For statements with k operands
-class knaryType : public Type {
+class karyType : public Type {
 protected:
-    knaryType(Kind k, std::initializer_list<Type*> ops);
+    karyType(Kind k);
+    karyType(Kind k, std::initializer_list<Type*> list);
+    karyType(Kind k, std::vector<Type*> const& vec);
+    karyType(Kind k, std::vector<Type*>&& vec);
+
 private:
-    Type* const* firstOp;
-    Type* const* lastOp;
-    std::initializer_list<Type*> allOps;
+    std::vector<Type*> myOps;
+
 public:
-    Type* const* getFirst() const { return firstOp; }
-    Type* const* getLast() const { return lastOp; }
-    std::initializer_list<Type*> getChildren() const { return allOps; }
+    Type** begin() { return myOps.data(); }
+    Type** end() { return myOps.data() + myOps.size(); }
+    Type* const* begin() const { return myOps.data(); }
+    Type* const* end() const { return myOps.data() + myOps.size(); }
+    NodeRange<Type> getChildren() { return { begin(), end()}; }
+    NodeRange<Type const> getChildren() const { return { begin(), end()}; }
 };
-inline knaryType::knaryType(Kind k, std::initializer_list<Type*> ops) :
-    Type(k), firstOp(ops.begin()), lastOp(ops.end()), allOps(ops) {}
+inline karyType::karyType(Kind k) :
+    Type(k) {}
+inline karyType::karyType(Kind k, std::initializer_list<Type*> list) :
+    Type(k), myOps(list) {}
+inline karyType::karyType(Kind k, std::vector<Type*> const& vec) :
+    Type(k), myOps(vec) {}
+inline karyType::karyType(Kind k, std::vector<Type*>&& vec) :
+    Type(k), myOps(std::move(vec)) {}
 
 // Types
 
@@ -118,20 +130,24 @@ inline refType::refType(Type* op) :
     unaryType(myRefType, op) {}
 
 // The function type
-class funcType : public knaryType {
+class funcType : public karyType {
 public:
-    funcType(std::initializer_list<Type*> ops);
-    funcType(std::vector<Type*> const& ops);
-    funcType(std::vector<Type*>&& ops);
-    std::size_t getParamCount() const { return getLast() - getFirst(); }
-    NodeRange<Type> getParameterTypes() { return {}; };
-    NodeRange<Type const> getParameterTypes() const;
-    Type* getReturnType() { return {}; }
-    Type const* getReturnType() const { return nullptr; };
+    funcType(std::initializer_list<Type*> list);
+    funcType(std::vector<Type*> const& vec);
+    funcType(std::vector<Type*>&& vec);
+    std::size_t getParamCount() const { return getChildren().getSize() - 1; }
+    NodeRange<Type> getParameterTypes() { return getChildren().getRevTail(); }
+    NodeRange<Type const> getParameterTypes() const { return getChildren().getRevTail(); }
+    Type* getReturnType() { return getChildren().getBack(); }
+    Type const* getReturnType() const { return getChildren().getBack(); }
 
 };
-inline funcType::funcType(std::initializer_list<Type*> ops) :
-    knaryType(myFuncType, ops) {}
+inline funcType::funcType(std::initializer_list<Type*> list) :
+    karyType(myFuncType, list) {}
+inline funcType::funcType(std::vector<Type*> const& vec) :
+    karyType(myFuncType, vec) {}
+inline funcType::funcType(std::vector<Type*>&& vec) :
+    karyType(myFuncType, vec) {}
 
 //Operations
 bool isSame(Type const* a, Type const* b);

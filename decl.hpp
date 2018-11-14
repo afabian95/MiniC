@@ -18,7 +18,6 @@ class valDecl;
 class varDecl;
 class Printer;
 
-
 // The general declaration class
 class Decl {
 public:
@@ -62,30 +61,32 @@ inline nullaryDecl::nullaryDecl(Kind k) :
     Decl(k) {}
 
 // For declarations with k operands
-class knaryDecl : public Decl {
+class karyDecl : public Decl {
 protected:
-    knaryDecl(Kind k, std::initializer_list<Decl*> ops);
-//    knaryDecl(Kind k, std::vector<Decl*> const& ops);
-//    knaryDecl(Kind k, std::vector<Decl*>& ops);
+    karyDecl(Kind k);
+    karyDecl(Kind k, std::initializer_list<Decl*> list);
+    karyDecl(Kind k, std::vector<Decl*> const& vec);
+    karyDecl(Kind k, std::vector<Decl*>&& vec);
+
 private:
-    Decl* const* firstOp;
-    Decl* const* lastOp;
-    std::initializer_list<Decl*> allOps;
-//    std::vector<Decl*> const& constVecOps;
-//    std::vector<Decl*>& vecOps;
+    std::vector<Decl*> myOps;
+
 public:
-    Decl* const* getFirst() const { return firstOp; }
-    Decl* const* getLast() const { return lastOp; }
-    std::initializer_list<Decl*> getChildren() const { return allOps; }
-//    std::vector<Decl*> const& getChildrenConstVector() const { return constVecOps; }
-//    std::vector<Decl*>& getChildrenVector() const { return vecOps; }
+    Decl** begin() { return myOps.data(); }
+    Decl** end() { return myOps.data() + myOps.size(); }
+    Decl* const* begin() const { return myOps.data(); }
+    Decl* const* end() const { return myOps.data() + myOps.size(); }
+    NodeRange<Decl> getChildren() { return { begin(), end()}; }
+    NodeRange<Decl const> getChildren() const { return { begin(), end()}; }
 };
-inline knaryDecl::knaryDecl(Kind k, std::initializer_list<Decl*> ops) :
-    Decl(k), firstOp(ops.begin()), lastOp(ops.end()), allOps(ops) {}
-//inline knaryDecl::knaryDecl(Kind k, std::vector<Decl*> const& ops) :
-//    Decl(k), firstOp(ops.begin()), lastOp(ops.end()), constVecOps(ops) {}
-//inline knaryDecl::knaryDecl(Kind k, std::vector<Decl*>& ops) :
-//    Decl(k), firstOp(ops.begin()), lastOp(ops.end()), constVecOps(ops) {}
+inline karyDecl::karyDecl(Kind k) :
+    Decl(k) {}
+inline karyDecl::karyDecl(Kind k, std::initializer_list<Decl*> list) :
+    Decl(k), myOps(list) {}
+inline karyDecl::karyDecl(Kind k, std::vector<Decl*> const& vec) :
+    Decl(k), myOps(vec) {}
+inline karyDecl::karyDecl(Kind k, std::vector<Decl*>&& vec) :
+    Decl(k), myOps(std::move(vec)) {}
 
 // For declarations containing values
 class valDecl {
@@ -121,7 +122,7 @@ inline void varDecl::setInit(Expr* e) {
 }
 
 // Function declaration
-class funcDecl : public knaryDecl, public valDecl {
+class funcDecl : public karyDecl, public valDecl {
 public:
     funcDecl(Name* n, Type* t, std::initializer_list<Decl*> ops, Stmt* s);
 private:
@@ -149,21 +150,21 @@ public:
     void setBody(Stmt* s);
 };
 inline funcDecl::funcDecl(Name* n, Type* t, std::initializer_list<Decl*> ops, Stmt* s) :
-    knaryDecl(myFuncDecl, ops), valDecl(n, t), myBody(s) {}
+    karyDecl(myFuncDecl, ops), valDecl(n, t), myBody(s) {}
 
 // Program declaration
-class progDecl : public knaryDecl {
+class progDecl : public karyDecl {
 public:
     progDecl(std::initializer_list<Decl*> list);
     progDecl(std::vector<Decl*> const& vec);
     progDecl(std::vector<Decl*>& vec);
 };
 inline progDecl::progDecl(std::initializer_list<Decl*> list) :
-    knaryDecl(myProgDecl, list) {}
-//inline progDecl::progDecl(std::vector<Decl*> const& vec) :
-//    knaryDecl(myProgDecl, vec) {}
-//inline progDecl::progDecl(std::vector<Decl*>& vec) :
-//    Kary_decl(prog_decl, vec) {}
+    karyDecl(myProgDecl, list) {}
+inline progDecl::progDecl(std::vector<Decl*> const& vec) :
+    karyDecl(myProgDecl, vec) {}
+inline progDecl::progDecl(std::vector<Decl*>& vec) :
+    karyDecl(myProgDecl, vec) {}
 
 // Operations
 void printDecl(Printer& p, Decl const* d);

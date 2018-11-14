@@ -76,20 +76,32 @@ inline binaryStmt::binaryStmt(Kind k, Stmt* op1, Stmt* op2) :
     Stmt(k), firstOp(op1), secondOp(op2) {}
 
 // For statements with k operands
-class knaryStmt : public Stmt {
+class karyStmt : public Stmt {
 protected:
-    knaryStmt(Kind k, std::initializer_list<Stmt*> ops);
+    karyStmt(Kind k);
+    karyStmt(Kind k, std::initializer_list<Stmt*> list);
+    karyStmt(Kind k, std::vector<Stmt*> const& vec);
+    karyStmt(Kind k, std::vector<Stmt*>&& vec);
+
 private:
-    Stmt* const* firstOp;
-    Stmt* const* lastOp;
-    std::initializer_list<Stmt*> allOps;
+    std::vector<Stmt*> myOps;
+
 public:
-    Stmt* const* getFirst() const { return firstOp; }
-    Stmt* const* getLast() const { return lastOp; }
-    std::initializer_list<Stmt*> getChildren() const { return allOps;}
+    Stmt** begin() { return myOps.data(); }
+    Stmt** end() { return myOps.data() + myOps.size(); }
+    Stmt* const* begin() const { return myOps.data(); }
+    Stmt* const* end() const { return myOps.data() + myOps.size(); }
+    NodeRange<Stmt> getChildren() { return { begin(), end()}; }
+    NodeRange<Stmt const> getChildren() const { return { begin(), end()}; }
 };
-inline knaryStmt::knaryStmt(Kind k, std::initializer_list<Stmt*> ops) :
-    Stmt(k), firstOp(ops.begin()), lastOp(ops.end()), allOps(ops) {}
+inline karyStmt::karyStmt(Kind k) :
+    Stmt(k) {}
+inline karyStmt::karyStmt(Kind k, std::initializer_list<Stmt*> list) :
+    Stmt(k), myOps(list) {}
+inline karyStmt::karyStmt(Kind k, std::vector<Stmt*> const& vec) :
+    Stmt(k), myOps(vec) {}
+inline karyStmt::karyStmt(Kind k, std::vector<Stmt*>&& vec) :
+    Stmt(k), myOps(std::move(vec)) {}
 
 // Statements
 
@@ -118,12 +130,18 @@ inline contStmt::contStmt() :
     nullaryStmt(myContStmt) {}
 
 // Block statement
-class blockStmt : public knaryStmt {
+class blockStmt : public karyStmt {
 public:
     blockStmt(std::initializer_list<Stmt*> ops);
+    blockStmt(std::vector<Stmt*> const& vec);
+    blockStmt(std::vector<Stmt*>& vec);
 };
 inline blockStmt::blockStmt(std::initializer_list<Stmt*> ops) :
-    knaryStmt(myBlockStmt, ops) {}
+    karyStmt(myBlockStmt, ops) {}
+inline blockStmt::blockStmt(std::vector<Stmt*> const& vec) :
+    karyStmt(myBlockStmt, vec) {}
+inline blockStmt::blockStmt(std::vector<Stmt*>& vec) :
+    karyStmt(myBlockStmt, vec) {}
 
 // While statement
 class whileStmt : public unaryStmt {
