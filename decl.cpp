@@ -15,11 +15,11 @@
 char const* Decl::getDeclName() const {
     switch (myKind) {
         case myVarDecl:
-            return "variable declaration";
+            return "var_decl";
         case myFuncDecl:
-            return "function declaration";
+            return "func_decl";
         case myProgDecl:
-            return "program declaration";
+            return "prog_decl";
     }
     assert(false);
 }
@@ -56,14 +56,13 @@ std::size_t funcDecl::getParamCount() const {
     return getFuncType()->getParamCount();
 }
 
-//TODO: Add accessors to getChildren()
-//NodeRange<Decl> funcDecl::getParams() {
-//    return getChildren().front(getParamCount());
-//}
+NodeRange<Decl> funcDecl::getParams() {
+    return getChildren().getFront(getParamCount());
+}
 
-//NodeRange<Decl const> funcDecl::getParams() const {
-//    return getChildren().front(getParamCount());
-//}
+NodeRange<Decl const> funcDecl::getParams() const {
+    return getChildren().getFront(getParamCount());
+}
 
 void funcDecl::setParams(std::vector<Decl*> const& params) {
     for (Decl* p : params)
@@ -77,8 +76,8 @@ void funcDecl::setParams(std::initializer_list<Decl*> params) {
 
 void funcDecl::addParam(Decl* d) {
     assert(d->isVariable());
-//    assert(getChildren().size() <= getParamCount());
-//    addChild(d);
+    assert(getChildren().getSize() <= getParamCount());
+    addChild(d);
 }
 
 Decl* funcDecl::getReturn() {
@@ -99,6 +98,6 @@ Decl const* funcDecl::getReturn() const {
 
 void funcDecl::setReturn(Decl* d) {
     assert(d->isVariable());
-    //assert(getChildren().size() == getParamCount());
-    //add_child(d);
+    assert(getChildren().getSize() == getParamCount());
+    addChild(d);
 }

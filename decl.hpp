@@ -72,6 +72,7 @@ private:
     std::vector<Decl*> myOps;
 
 public:
+    void addChild(Decl* child) { myOps.push_back(child); }
     Decl** begin() { return myOps.data(); }
     Decl** end() { return myOps.data() + myOps.size(); }
     Decl* const* begin() const { return myOps.data(); }

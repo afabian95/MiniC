@@ -35,13 +35,13 @@ void printFunc(Printer& p, funcDecl const* d) {
     if (Name const* n = d->getName())
         printName(p, n);
 
-//    if (Stmt* s = d->getBody())
-//        printStmt(p, s);
+    if (Stmt* s = d->getBody())
+        printStmt(p, s);
 }
 
 void printProg(Printer& p, progDecl const* d) {
-//    for (Decl* member : *d)
-//        printDecl(p, member);
+    for (Decl* member : *d)
+        printDecl(p, member);
 }
 
 void printDecl(Printer& p, Decl const* d) {

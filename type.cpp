@@ -8,52 +8,57 @@
 char const* Type::getTypeName() const {
     switch (myKind) {
         case myBoolType:
-            return "bool type";
+            return "bool_type";
         case myIntType:
-            return "int type";
+            return "int_type";
         case myFloatType:
-            return "float type";
+            return "float_type";
         case myRefType:
-            return "reference type";
+            return "ref_type";
         case myFuncType:
-            return "function type";
+            return "func_type";
     }
     assert(false);
 }
 
-bool Type::isReferenceTo(Type const* that) const {
+bool Type::isReferenceTo(Type const* inputType) const {
     if (isReference()) {
-        refType const* thisRef = static_cast<refType const*>(this);
-    if (isSame(thisRef->getObjectType(), that))
+        refType const* rType = static_cast<refType const*>(this);
+    if (isSameType(rType->getObjectType(), inputType))
         return true;
     }
     return false;
 }
 
 // Support functions for isSameType
-bool isSame(Type const* typeOne, Type const* typeTwo) {
-    return typeOne->isSameType(typeTwo);
+bool isSameAs(Type const* typeOne, Type const* typeTwo) {
+    return isSameType(typeOne, typeTwo);
 }
 
 static bool isSameRef(refType const* refOne, refType const* refTwo) {
-    return isSame(refOne->getChild(), refTwo->getChild());
+    return isSameType(refOne->getChild(), refTwo->getChild());
 }
 
 static bool isSameFunc(funcType const* funcOne, funcType const* funcTwo) {
     return std::equal(funcOne->begin(), funcOne->end(),
-                      funcTwo->begin(), funcTwo->end(), isSame);
+                      funcTwo->begin(), funcTwo->end(), isSameType);
 }
 
 // Function to determine if two values have the same type
-bool Type::isSameType(Type const* that) const {
+bool isSameType(Type const* typeOne, Type const* typeTwo) {
     //If different base types, return false
-    if (myKind != that->myKind)
+    if (typeOne->getTypeKind() != typeTwo->getTypeKind())
         return false;
     //If reference or function, look at operands
-    if (myKind == myRefType)
-        return isSameRef(static_cast<refType const*>(this), static_cast<refType const*>(that));
-    if (myKind == myFuncType)
-        return isSameFunc(static_cast<funcType const*>(this), static_cast<funcType const*>(that));
-    // Remaining types are bool, int, and float (already checked)
-    return true;
+    switch (typeOne->getTypeKind()) {
+        case Type::myRefType:
+            return isSameRef(static_cast<refType const*>(typeOne),
+                             static_cast<refType const*>(typeTwo));
+        case Type::myFuncType:
+            return isSameFunc(static_cast<funcType const*>(typeOne),
+                              static_cast<funcType const*>(typeTwo));
+        // Bool, int, and float already covered
+        default:
+            return true;
+    }
 }

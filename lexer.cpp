@@ -137,13 +137,11 @@ Token Lexer::matchNumber() {
     char const* number = myFirst + 1;
     while (!isEOF(number) && isDigit(*number))
         number++;
-    myFirst = number;
 
     std::string id(myFirst, number);
     Symbol symb = mySymbs->get(id);
 
-    Token::Kind kind;
-    auto kw = myKWs.find(id);
-    kind = kw->second;
-    return Token(kind, symb);
+    myFirst = number;
+
+    return Token(Token::myIntLitToken, symb);
 }

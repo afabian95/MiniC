@@ -40,7 +40,7 @@ public:
     bool isFunction() const { return myKind == myFuncType; }
     bool isObject() const { return myKind != myRefType; }
     bool isArithmetic() const { return isInt() || isFloat(); }
-    bool isSameType(Type const* inputType) const;
+    bool isSameAs(Type const* inputType) const;
     bool isReferenceTo(Type const* inputType) const;
 };
 inline Type::Type(Kind k) :
@@ -150,7 +150,7 @@ inline funcType::funcType(std::vector<Type*>&& vec) :
     karyType(myFuncType, vec) {}
 
 //Operations
-bool isSame(Type const* a, Type const* b);
+bool isSameType(Type const* a, Type const* b);
 
 void printType(Printer& p, Type const* t);
 

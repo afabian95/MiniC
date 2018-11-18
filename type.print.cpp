@@ -19,24 +19,24 @@ static void printRef(Printer& p, refType const* t) {
 
 static void printFunc(Printer& p, funcType const* t) {
     p.getStream() << '(';
-    //NodeRange<const Type> parms = t->getParameterTypes();
-    //for (Type* const* i = parms.begin(); i != parms.end(); i++) {
-    //    printType(p, *i);
-    //    if (std::next(i) != parms.end())
-            p.getStream() << ',';
-    //}
+    NodeRange<const Type> params = t->getParameterTypes();
+    for (Type* const* i = params.begin(); i != params.end(); i++) {
+        printType(p, *i);
+    if (std::next(i) != params.end())
+        p.getStream() << ',';
+    }
     p.getStream() << ')' << "->";
-    //printType(p, t->getReturnType());
+    printType(p, t->getReturnType());
 }
 
 void printType(Printer& p, Type const* t) {
     switch (t->getTypeKind()) {
         case Type::myBoolType:
-            return printLiteral(p, "boolean literal");
+            return printLiteral(p, "bool");
         case Type::myIntType:
-            return printLiteral(p, "integer literal");
+            return printLiteral(p, "int");
         case Type::myFloatType:
-            return printLiteral(p, "floating point literal");
+            return printLiteral(p, "float");
         case Type::myRefType:
             return printRef(p, static_cast<refType const*>(t));
         case Type::myFuncType:
@@ -45,7 +45,7 @@ void printType(Printer& p, Type const* t) {
 }
 
 std::ostream& operator<<(std::ostream& os, Type const& t) {
-  Printer p(os);
-  printType(p, &t);
-  return os;
+    Printer p(os);
+    printType(p, &t);
+    return os;
 }

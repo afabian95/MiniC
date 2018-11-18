@@ -29,8 +29,18 @@ static Value evalBinaryOp(Eval& eval, binaryExpr const* e, T op) {
     Value v2 = evalExpr(eval, e->getSecond());
     if (e->getType()->isIntegral())
         return Value(op(v1.getInt(), v2.getInt()));
-//    else if (e->getType()->isFloat())
-//        return Value(op(v1.getFloat(), v2.getFloat()));
+    else if (e->getType()->isFloat())
+        return Value(op(v1.getFloat(), v2.getFloat()));
+    else
+        assert(false);
+}
+
+template<>
+Value evalBinaryOp<std::modulus<>>(Eval& eval, binaryExpr const* e, std::modulus<> op) {
+    Value v1 = evalExpr(eval, e->getFirst());
+    Value v2 = evalExpr(eval, e->getSecond());
+    if (e->getType()->isIntegral())
+        return Value(op(v1.getInt(), v2.getInt()));
     else
         assert(false);
 }

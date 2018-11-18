@@ -64,10 +64,10 @@ static Control evalReturn(Eval& eval, returnStmt const* s) {
 }
 
 static Control evalDecl(Eval& eval, declStmt const* s) {
-    // Decl* decl; // FIXME: Get from declStmt
-    // Object* obj = eval.getCurrentFrame()->getLocalVars().locate(decl);
-    // Value val = evalExpr(eval, s->getDeclaration());
-    // obj->init(val);
+    varDecl* decl = static_cast<varDecl*>(s->getDeclaration());
+    Object* obj = eval.getCurrentFrame()->getLocalVars().locate(decl);
+    Value val = evalExpr(eval, decl->getInit());
+    obj->init(val);
     return nextFunc;
 }
 
