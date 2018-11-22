@@ -1,4 +1,5 @@
 /* symbol.hpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -15,15 +16,20 @@ private:
     std::string const* myStr;
 
 public:
+    // Constructs symbol from string
     Symbol(std::string const* str) : myStr(str) { }
+    // Returns the spelling of the symbol
     std::string const& str() const { return *myStr; }
+    // Returns whether two symbols are equal
     friend bool operator ==(Symbol a, Symbol b) { return a.myStr == b.myStr; }
+    // Returns whether two symbols are not equal
     friend bool operator !=(Symbol a, Symbol b) { return a.myStr != b.myStr; }
 };
 
-
+// Stores the symbols
 class symbolTable : std::unordered_set<std::string> {
 public:
+    // Returns the unique symbol for a string
     Symbol get(std::string const& str);
     Symbol get(char const* str);
 };

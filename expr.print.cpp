@@ -1,4 +1,5 @@
 /* expr.print.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -11,8 +12,7 @@
 
 #include <iostream>
 
-// Print functions
-
+// Prints boolean expression
 static void printBool(Printer& p, boolExpr const* e){
     if (e->getBoolValue())
         p.getStream() << "true";
@@ -20,18 +20,22 @@ static void printBool(Printer& p, boolExpr const* e){
         p.getStream() << "false";
 }
 
+// Prints integer expression
 static void printInt(Printer& p, intExpr const* e){
     p.getStream() << e->getIntValue();
 }
 
+// Prints floating point expression
 static void printFloat(Printer& p, floatExpr const* e){
     p.getStream() << e->getFloatValue();
 }
 
+// Prints identifier expression
 static void printId(Printer& p, idExpr const* e){
     p.getStream() << e->getDeclaration()->getName()->getString();
 }
 
+// Prints any expression
 void printExpr(Printer& p, Expr const* e){
     switch (e->getExprKind()) {
         case Expr::myBoolLit:

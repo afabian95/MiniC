@@ -1,4 +1,5 @@
 /* value.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -9,8 +10,9 @@
 
 #include <iostream>
 
+// Prints value
 std::ostream& operator<<(std::ostream& os, Value const& v) {
-    switch (v.getValue()) {
+    switch (v.getValueKind()) {
         case Value::myNonVal:
             return os << "<indeterminate>";
         case Value::myIntVal:

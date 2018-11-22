@@ -1,4 +1,5 @@
 /* store.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -23,6 +24,7 @@ Object* MonotonicStore::locate(Decl* d) {
     return &myStorage[myLookup.find(d)->second];
 }
 
+// Checks if a store contains an object
 static bool containsObject(std::vector<Object> const& store, Object* obj) {
     auto i = std::find_if(store.begin(), store.end(), [obj](Object const& x) {
         return &x == obj;

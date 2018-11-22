@@ -1,4 +1,5 @@
 /* decl.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -46,7 +47,6 @@ valDecl* Decl::getAsValue() {
 valDecl const* Decl::getAsValue() const {
     return const_cast<Decl*>(this)->getAsValue();
 }
-
 
 funcType* funcDecl::getFuncType() const {
     return static_cast<funcType*>(getType());

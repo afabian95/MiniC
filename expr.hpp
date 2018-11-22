@@ -1,4 +1,5 @@
 /* expr.hpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -17,30 +18,30 @@ class Expr {
 public:
     // Kinds of expressions
     enum Kind{
-        myBoolLit,
-        myIntLit,
-        myFloatLit,
-        myIdExpr,
-        myANDExpr,
-        myORExpr,
-        myNOTExpr,
-        myCondExpr,
-        myEqExpr,
-        myNEqExpr,
-        myLTExpr,
-        myGTExpr,
-        myLTEqExpr,
-        myGTEqExpr,
-        myAddExpr,
-        mySubExpr,
-        myMultExpr,
-        myDivQuoExpr,
-        myDivRemExpr,
-        myNegExpr,
-        myRecExpr,
-        myAssignExpr,
-        myCallExpr,
-        myValConv,
+        myBoolLit,      // boolean literal
+        myIntLit,       // integer literal
+        myFloatLit,     // floating point literal
+        myIdExpr,       // identifier expression
+        myANDExpr,      // AND expression
+        myORExpr,       // OR expression
+        myNOTExpr,      // NOT expression
+        myCondExpr,     // conditional expression
+        myEqExpr,       // equals expression
+        myNEqExpr,      // not equals expression
+        myLTExpr,       // less than expression
+        myGTExpr,       // greater than expression
+        myLTEqExpr,     // less than or equals expression
+        myGTEqExpr,     // greater than or equals expression
+        myAddExpr,      // addition expression
+        mySubExpr,      // subtraction expression
+        myMultExpr,     // multiplication expression
+        myDivQuoExpr,   // division expression
+        myDivRemExpr,   // remainder expression
+        myNegExpr,      // negation expression
+        myRecExpr,      // reciprocal expression
+        myAssignExpr,   // assignment expression
+        myCallExpr,     // call expression
+        myValConv,      // value conversion
     };
 
 protected:
@@ -51,8 +52,11 @@ private:
     Type* myType;
 
 public:
+    // Returns the kind of the expression
     Kind getExprKind() const { return myKind; }
+    // Returns the name of the expression
     char const* getExprName() const;
+    // Returns the type of the expression
     Type* getType() const { return myType; }
 };
 inline Expr::Expr(Kind k, Type* t) :
@@ -73,6 +77,7 @@ protected:
 private:
     Expr* myOp;
 public:
+    // Returns the only operand
     Expr* getChild() const { return myOp; }
 };
 inline unaryExpr::unaryExpr(Kind k, Type* t, Expr* op) :
@@ -86,7 +91,9 @@ private:
     Expr* firstOp;
     Expr* secondOp;
 public:
+    // Returns the first operand
     Expr* getFirst() const { return firstOp; }
+    // Returns the second operand
     Expr* getSecond() const { return secondOp; }
 };
 inline binaryExpr::binaryExpr(Kind k, Type* t, Expr* op1, Expr* op2) :
@@ -101,8 +108,11 @@ private:
     Expr* secondOp;
     Expr* thirdOp;
 public:
+    // Returns the first operand
     Expr* getFirst() const { return firstOp; }
+    // Returns the second operand
     Expr* getSecond() const { return secondOp; }
+    // Returns the third operand
     Expr* getThird() const { return thirdOp; }
 };
 inline ternaryExpr::ternaryExpr(Kind k, Type* t, Expr* op1, Expr* op2, Expr* op3) :
@@ -111,7 +121,9 @@ inline ternaryExpr::ternaryExpr(Kind k, Type* t, Expr* op1, Expr* op2, Expr* op3
 // For expressions with k operands
 class karyExpr : public Expr {
 protected:
+    // Initialized with no operands
     karyExpr(Kind k, Type* t);
+    // Initialized with a list of operands
     karyExpr(Kind k, Type* t, std::initializer_list<Expr*> list);
     karyExpr(Kind k, Type* t, std::vector<Expr*> const& vec);
     karyExpr(Kind k, Type* t, std::vector<Expr*>&& vec);
@@ -120,10 +132,13 @@ private:
     std::vector<Expr*> myOps;
 
 public:
+    // Returns the first operand
     Expr** begin() { return myOps.data(); }
-    Expr** end() { return myOps.data() + myOps.size(); }
     Expr* const* begin() const { return myOps.data(); }
+    // Returns the last operand
+    Expr** end() { return myOps.data() + myOps.size(); }
     Expr* const* end() const { return myOps.data() + myOps.size(); }
+    // Returns a range of operands
     NodeRange<Expr> getChildren() { return { begin(), end()}; }
     NodeRange<Expr const> getChildren() const { return { begin(), end()}; }
 };
@@ -340,11 +355,14 @@ inline assignExpr::assignExpr(Type* t, Expr* e1, Expr* e2) :
 // The call expression
 class callExpr : public karyExpr {
 public:
+    // Constructs the call expression from a list of arguments
     callExpr(Type* t, std::initializer_list<Expr*> list);
     callExpr(Type* t, std::vector<Expr*> const& vec);
     callExpr(Type* t, std::vector<Expr*>&& vec);
+    // Returns the expression designating the function to be called
     Expr* getFunction() { return getChildren().getFront(); }
     Expr const* getFunction() const { return getChildren().getFront(); }
+    // Returns the arguments to the function call
     NodeRange<Expr> getArguments() { return getChildren().getTail(); }
     NodeRange<Expr const> getArguments() const { return getChildren().getTail(); }
 };

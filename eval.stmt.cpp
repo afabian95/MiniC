@@ -1,4 +1,5 @@
 /* eval.stmt.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -9,11 +10,13 @@
 
 #include <iostream>
 
+// Evaluates expression statement
 static Control evalExpr(Eval& eval, exprStmt const* s) {
     evalExpr(eval, s->getExpression());
     return nextFunc;
 }
 
+// Evaluates block statement
 static Control evalBlock(Eval& eval, blockStmt const* s) {
     for (Stmt const* child : s->getChildren()) {
     Control ctrl = evalStmt(eval, child);
@@ -23,6 +26,7 @@ static Control evalBlock(Eval& eval, blockStmt const* s) {
     return nextFunc;
 }
 
+// Evaluates if statement
 static Control evalIf(Eval& eval, ifStmt const* s) {
     Value cond = evalExpr(eval, s->getCond());
     if (cond.getInt())
@@ -30,6 +34,7 @@ static Control evalIf(Eval& eval, ifStmt const* s) {
     return evalStmt(eval, s->getFalse());
 }
 
+// Evaluates while statement
 static Control evalWhile(Eval& eval, whileStmt const* s) {
     while (true) {
         Value cond = evalExpr(eval, s->getCond());
@@ -46,14 +51,17 @@ static Control evalWhile(Eval& eval, whileStmt const* s) {
     return nextFunc;
 }
 
+// Evaluates break statement
 static Control evalBreak(Eval& eval, breakStmt const* s) {
     return breakFunc;
 }
 
+// Evaluates continue statement
 static Control evalCont(Eval& eval, contStmt const* s) {
     return contFunc;
 }
 
+// Evaluates return statement
 static Control evalReturn(Eval& eval, returnStmt const* s) {
     Value val = evalExpr(eval, s->getReturn());
     Frame* frame = eval.getCurrentFrame();
@@ -63,6 +71,7 @@ static Control evalReturn(Eval& eval, returnStmt const* s) {
     return returnFunc;
 }
 
+// Evaluates declaration statement
 static Control evalDecl(Eval& eval, declStmt const* s) {
     varDecl* decl = static_cast<varDecl*>(s->getDeclaration());
     Object* obj = eval.getCurrentFrame()->getLocalVars().locate(decl);
@@ -71,6 +80,7 @@ static Control evalDecl(Eval& eval, declStmt const* s) {
     return nextFunc;
 }
 
+// Evaluates any statement
 Control evalStmt(Eval& eval, Stmt const* s) {
     switch (s->getStmtKind()) {
         case Stmt::mySkipStmt:

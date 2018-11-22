@@ -1,4 +1,5 @@
 /* main.hpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 
+// Tests the lexer
 int main(int argc, char* argv[]) {
     std::ifstream ifs(argv[1]);
     std::istreambuf_iterator<char> first(ifs);

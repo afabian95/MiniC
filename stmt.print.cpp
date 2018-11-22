@@ -1,4 +1,5 @@
 /* stmt.print.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -10,12 +11,12 @@
 
 #include<iostream>
 
-// Print functions
-
+// Prints literal statement
 static void printLiteral(Printer& p, char const* str) {
     p.getStream() << str << ';';
 }
 
+// Prints block statement
 static void printBlock(Printer& p, blockStmt const* s){
     p.getStream() << '{';
     for (Stmt* sub : *s) {
@@ -25,15 +26,18 @@ static void printBlock(Printer& p, blockStmt const* s){
     p.getStream() << '}';
 }
 
+// Prints expression statement
 static void printExpression(Printer& p, exprStmt const* s){
     printExpr(p, s->getExpression());
 }
 
+// Prints return statement
 static void printReturn(Printer& p, returnStmt const* s){
     p.getStream() << "return ";
     printExpr(p, s->getReturn());
 }
 
+// Prints any statement
 void printStmt(Printer& p, Stmt const* s){
     switch (s->getStmtKind()) {
         case Stmt::mySkipStmt:

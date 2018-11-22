@@ -1,4 +1,5 @@
 /* expr.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -8,53 +9,53 @@
 char const* Expr::getExprName() const {
     switch (myKind) {
         case myBoolLit:
-            return "boolean literal";
+            return "bool_lit";
         case myIntLit:
-            return "integer literal";
+            return "int_lit";
         case myFloatLit:
-            return "floating point literal";
+            return "float_lit";
         case myIdExpr:
-            return "ID expression";
+            return "id_expr";
         case myANDExpr:
-            return "AND expression";
+            return "and_expr";
         case myORExpr:
-            return "OR expression";
+            return "or_expr";
         case myNOTExpr:
-            return "NOT expression";
+            return "not_expr";
         case myCondExpr:
-            return "ID expression";
+            return "cond_expr";
         case myEqExpr:
-            return "equals expression";
+            return "eq_expr";
         case myNEqExpr:
-            return "not equals expression";
+            return "ne_expr";
         case myLTExpr:
-            return "less than expression";
+            return "lt_expr";
         case myGTExpr:
-            return "greater than expression";
+            return "gt_expr";
         case myLTEqExpr:
-            return "less than or equals expression";
+            return "le_expr";
         case myGTEqExpr:
-            return "greater than or equals expression";
+            return "ge_expr";
         case myAddExpr:
-            return "addition expression";
+            return "add_expr";
         case mySubExpr:
-            return "subtraction expression";
+            return "sub_expr";
         case myMultExpr:
-            return "multiplication expression";
+            return "mul_expr";
         case myDivQuoExpr:
-            return "division (quotient) expression";
+            return "div_expr";
         case myDivRemExpr:
-            return "division (remainder) expression";
+            return "rem_expr";
         case myNegExpr:
-            return "negation expression";
+            return "neg_expr";
         case myRecExpr:
-            return "reciprocal expression";
+            return "rec_expr";
         case myAssignExpr:
-            return "assignment expression";
+            return "assign_expr";
         case myCallExpr:
-            return "call expression";
+            return "call_expr";
         case myValConv:
-            return "value conversion";
+            return "value_conv";
     };
     assert(false);
 }

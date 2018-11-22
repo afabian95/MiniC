@@ -1,4 +1,5 @@
 /* stmt.hpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -17,15 +18,15 @@ class Stmt {
 public:
     // Kinds of statements
     enum Kind{
-        mySkipStmt,
-        myBreakStmt,
-        myContStmt,
-        myBlockStmt,
-        myWhileStmt,
-        myIfStmt,
-        myRetStmt,
-        myExprStmt,
-        myDeclStmt,
+        mySkipStmt,     // skip statement
+        myBreakStmt,    // break statement
+        myContStmt,     // continue statement
+        myBlockStmt,    // block statement
+        myWhileStmt,    // while statement
+        myIfStmt,       // if statement
+        myRetStmt,      // return statement
+        myExprStmt,     // expression statement
+        myDeclStmt,     // declaration statement
     };
 
 protected:
@@ -35,13 +36,15 @@ private:
     Kind myKind;
 
 public:
+    // Returns the kind of the statement
     Kind getStmtKind() const { return myKind; }
+    // Returns the name of the statement
     char const* getStmtName() const;
 };
 inline Stmt::Stmt(Kind k) :
     myKind(k) {}
 
-// For statements with no operands
+// For statements with no arguments
 class nullaryStmt : public Stmt {
 protected:
    nullaryStmt(Kind k);
@@ -49,19 +52,20 @@ protected:
 inline nullaryStmt::nullaryStmt(Kind k) :
     Stmt(k) {}
 
-// For statements with one operand
+// For statements with one argument
 class unaryStmt : public Stmt {
 protected:
     unaryStmt(Kind k, Stmt* op);
 private:
     Stmt* myOp;
 public:
+    // Returns the only argument
     Stmt* getChild() const { return myOp; }
 };
 inline unaryStmt::unaryStmt(Kind k, Stmt* op) :
     Stmt(k), myOp(op) {}
 
-// For statements with two operands
+// For statements with two arguments
 class binaryStmt : public Stmt {
 protected:
     binaryStmt(Kind k, Stmt* op1, Stmt* op2);
@@ -69,7 +73,9 @@ private:
     Stmt* firstOp;
     Stmt* secondOp;
 public:
+    // Returns the first argument
     Stmt* getFirst() const { return firstOp; }
+    // Returns the second argument
     Stmt* getSecond() const { return secondOp; }
 };
 inline binaryStmt::binaryStmt(Kind k, Stmt* op1, Stmt* op2) :
@@ -78,7 +84,9 @@ inline binaryStmt::binaryStmt(Kind k, Stmt* op1, Stmt* op2) :
 // For statements with k operands
 class karyStmt : public Stmt {
 protected:
+    // Initialized with no arguments
     karyStmt(Kind k);
+    // Initialized with a list of arguments
     karyStmt(Kind k, std::initializer_list<Stmt*> list);
     karyStmt(Kind k, std::vector<Stmt*> const& vec);
     karyStmt(Kind k, std::vector<Stmt*>&& vec);
@@ -87,10 +95,13 @@ private:
     std::vector<Stmt*> myOps;
 
 public:
+    // Returns the first argument
     Stmt** begin() { return myOps.data(); }
-    Stmt** end() { return myOps.data() + myOps.size(); }
     Stmt* const* begin() const { return myOps.data(); }
+    // Returns the last argument
+    Stmt** end() { return myOps.data() + myOps.size(); }
     Stmt* const* end() const { return myOps.data() + myOps.size(); }
+    // Returns a range of arguments
     NodeRange<Stmt> getChildren() { return { begin(), end()}; }
     NodeRange<Stmt const> getChildren() const { return { begin(), end()}; }
 };
@@ -132,6 +143,7 @@ inline contStmt::contStmt() :
 // Block statement
 class blockStmt : public karyStmt {
 public:
+    // Constructs the block statement from a list of arguments
     blockStmt(std::initializer_list<Stmt*> ops);
     blockStmt(std::vector<Stmt*> const& vec);
     blockStmt(std::vector<Stmt*>& vec);

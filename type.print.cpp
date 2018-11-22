@@ -1,4 +1,5 @@
 /* type.print.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -8,15 +9,18 @@
 
 #include <iostream>
 
+// Prints literal type
 static void printLiteral(Printer& p, char const* str) {
     p.getStream() << str;
 }
 
+// Prints reference type
 static void printRef(Printer& p, refType const* t) {
     p.getStream() << "ref ";
     printType(p, t->getObjectType());
 }
 
+// Prints function type
 static void printFunc(Printer& p, funcType const* t) {
     p.getStream() << '(';
     NodeRange<const Type> params = t->getParameterTypes();
@@ -29,6 +33,7 @@ static void printFunc(Printer& p, funcType const* t) {
     printType(p, t->getReturnType());
 }
 
+// Prints any type
 void printType(Printer& p, Type const* t) {
     switch (t->getTypeKind()) {
         case Type::myBoolType:

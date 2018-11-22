@@ -1,4 +1,5 @@
 /* eval.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -14,6 +15,7 @@ Object* Eval::allocateAutomatic(Decl* d) {
     return getCurrentFrame()->allocateLocalVars(d);
 }
 
+// Return the monotonic store
 static MonotonicStore& getStore(Eval& eval, int store) {
     if (store == -1)
         return eval.getGlobalVars();

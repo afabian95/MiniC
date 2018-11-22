@@ -1,4 +1,5 @@
 /* type.hpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -15,11 +16,11 @@ class Type {
 public:
     // Kinds of types
     enum Kind{
-        myBoolType,
-        myIntType,
-        myFloatType,
-        myRefType,
-        myFuncType,
+        myBoolType,     // boolean type
+        myIntType,      // integer type
+        myFloatType,    // floating point type
+        myRefType,      // reference type
+        myFuncType,     // function type
     };
 
 protected:
@@ -30,17 +31,29 @@ private:
 
 public:
     // Queries
+    // Returns the kind of the type
     Kind getTypeKind() const { return myKind; }
+    // Returns the spelling of the kind
     char const* getTypeName() const;
+    // Returns if type is a boolean
     bool isBool() const { return myKind == myBoolType; }
+    // Returns if type is an integer
     bool isInt() const { return myKind == myIntType; }
+    // Returns if type is integral
     bool isIntegral() const { return isBool() || isInt(); }
+    // Returns if type is floating point
     bool isFloat() const { return myKind == myFloatType; }
+    // Returns if type is a reference
     bool isReference() const { return myKind == myRefType; }
+    // Returns if type is a function
     bool isFunction() const { return myKind == myFuncType; }
+    // Returns if type is an object
     bool isObject() const { return myKind != myRefType; }
+    // Returns if type is arithmetic
     bool isArithmetic() const { return isInt() || isFloat(); }
-    bool isSameAs(Type const* inputType) const;
+    // Returns whether a type is the same as another
+    bool isSameTypeAs(Type const* inputType) const;
+    // Returns whether a type is a reference to another
     bool isReferenceTo(Type const* inputType) const;
 };
 inline Type::Type(Kind k) :
@@ -61,6 +74,7 @@ protected:
 private:
     Type* myOp;
 public:
+    // Returns the only operand
     Type* getChild() const { return myOp; }
 };
 inline unaryType::unaryType(Kind k, Type* op) :
@@ -69,7 +83,9 @@ inline unaryType::unaryType(Kind k, Type* op) :
 // For statements with k operands
 class karyType : public Type {
 protected:
+    // Initialized with no parameters
     karyType(Kind k);
+    // Initialized with a list of parameters
     karyType(Kind k, std::initializer_list<Type*> list);
     karyType(Kind k, std::vector<Type*> const& vec);
     karyType(Kind k, std::vector<Type*>&& vec);
@@ -78,10 +94,13 @@ private:
     std::vector<Type*> myOps;
 
 public:
+    // Returns the first operand
     Type** begin() { return myOps.data(); }
-    Type** end() { return myOps.data() + myOps.size(); }
     Type* const* begin() const { return myOps.data(); }
+    // Returns the last operand
+    Type** end() { return myOps.data() + myOps.size(); }
     Type* const* end() const { return myOps.data() + myOps.size(); }
+    // Returns a range of operands
     NodeRange<Type> getChildren() { return { begin(), end()}; }
     NodeRange<Type const> getChildren() const { return { begin(), end()}; }
 };
@@ -132,12 +151,16 @@ inline refType::refType(Type* op) :
 // The function type
 class funcType : public karyType {
 public:
+    // Constructs the function type from a list of parameters
     funcType(std::initializer_list<Type*> list);
     funcType(std::vector<Type*> const& vec);
     funcType(std::vector<Type*>&& vec);
+    // Returns the number of parameters
     std::size_t getParamCount() const { return getChildren().getSize() - 1; }
+    // Returns the parameter types
     NodeRange<Type> getParameterTypes() { return getChildren().getRevTail(); }
     NodeRange<Type const> getParameterTypes() const { return getChildren().getRevTail(); }
+    // Returns the return type
     Type* getReturnType() { return getChildren().getBack(); }
     Type const* getReturnType() const { return getChildren().getBack(); }
 

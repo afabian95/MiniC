@@ -1,4 +1,5 @@
 /* builder.check.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -41,7 +42,7 @@ Expr* Builder::requireType(Expr* e, Type* t) {
 Expr* Builder::requireValOf(Expr* e, Type* t) {
     assert(t->isObject());
     e = convertToVal(e);
-    if (!e->getType()->isSameType(t))
+    if (!e->getType()->isSameTypeAs(t))
         throw std::runtime_error("Error: invalid operand");
     return e;
 }
@@ -56,7 +57,7 @@ Expr* Builder::requireRefTo(Expr* e, Type* t) {
 std::pair<Expr*, Expr*> Builder::requireSame(Expr* e1, Expr* e2) {
     Type* t1 = e1->getType();
     Type* t2 = e2->getType();
-    if (!t1->isSameType(t2))
+    if (!t1->isSameTypeAs(t2))
         throw std::runtime_error("Error: operands have different types");
     return {e1, e2};
 }

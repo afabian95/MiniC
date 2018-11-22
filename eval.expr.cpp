@@ -1,4 +1,5 @@
 /* eval.expr.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -10,10 +11,12 @@
 
 #include <iostream>
 
+// Evaluates literal expression
 static Value evalLiteral(Eval& eval, literalExpr const* e) {
     return e->getValue();
 }
 
+// Evaluates identifier expression
 static Value evalId(Eval& eval, idExpr const* e) {
     Decl* d = e->getDeclaration();
     if (d->isFunction())
@@ -23,6 +26,7 @@ static Value evalId(Eval& eval, idExpr const* e) {
     return Value(addrValue{f->getIndex(), var});
 }
 
+// Evaluates binary expression
 template<typename T>
 static Value evalBinaryOp(Eval& eval, binaryExpr const* e, T op) {
     Value v1 = evalExpr(eval, e->getFirst());
@@ -35,6 +39,7 @@ static Value evalBinaryOp(Eval& eval, binaryExpr const* e, T op) {
         assert(false);
 }
 
+// Special case for modulus binary expression
 template<>
 Value evalBinaryOp<std::modulus<>>(Eval& eval, binaryExpr const* e, std::modulus<> op) {
     Value v1 = evalExpr(eval, e->getFirst());
@@ -50,6 +55,7 @@ static Value evalBinaryOp(Eval& eval, Expr const* e, T op) {
     return evalBinaryOp(eval, static_cast<binaryExpr const*>(e), op);
 }
 
+// Returns reciprocal
 template<typename T = void>
 struct invert {
     T operator()(T const& x) const { return T(1) / x; }
@@ -61,6 +67,7 @@ struct invert<void> {
     T operator()(T const& x) const { return T(1) / x; }
 };
 
+// Evaluates unary expression
 template<typename T>
 static Value evalUnaryOp(Eval& eval, unaryExpr const* e, T op) {
     Value v1 = evalExpr(eval, e->getChild());
@@ -77,6 +84,7 @@ static Value evalUnaryOp(Eval& eval, Expr const* e, T op) {
     return evalUnaryOp(eval, static_cast<unaryExpr const*>(e), op);
 }
 
+// Evaluates relation expression
 template<typename T>
 static Value evalRelation(Eval& eval, binaryExpr const* e, T cmp) {
     Value v1 = evalExpr(eval, e->getFirst());
@@ -94,6 +102,7 @@ static Value evalRelation(Eval& eval, Expr const* e, T cmp) {
     return evalRelation(eval, static_cast<binaryExpr const*>(e), cmp);
 }
 
+// Evaluates conditional expression
 static Value evalCond(Eval& eval, condExpr const* e) {
     Value v1 = evalExpr(eval, e->getCondition());
     if (v1.getInt())
@@ -102,6 +111,7 @@ static Value evalCond(Eval& eval, condExpr const* e) {
         return evalExpr(eval, e->getFalseValue());
 }
 
+// Evaluates assignment expression
 static Value evalAssign(Eval& eval, assignExpr const* e) {
     Value v1 = evalExpr(eval, e->getFirst());
     Value v2 = evalExpr(eval, e->getSecond());
@@ -110,13 +120,14 @@ static Value evalAssign(Eval& eval, assignExpr const* e) {
     return v1;
 }
 
+// Evaluates value expression
 static Value evalVal(Eval& eval, valConv const* e) {
     Value v = evalExpr(eval, e->getSource());
     Object* obj = eval.locateObject(v);
     return obj->load();
 }
 
-
+// Evaluates any expression
 Value evalExpr(Eval& eval, Expr const* e) {
     switch (e->getExprKind()) {
         case Expr::myBoolLit:

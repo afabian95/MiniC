@@ -1,4 +1,5 @@
 /* decl.print.cpp
+
  * Fabian Ardeljan
  * Compiler Design, Fall 2018, The University of Akron
  * Based on code examples by Dr. A. Sutton */
@@ -12,6 +13,7 @@
 
 #include <iostream>
 
+// Prints variable declaration
 template<typename T>
 void printVar(Printer& p, T const* d) {
     if (d->isObject())
@@ -29,6 +31,7 @@ void printVar(Printer& p, T const* d) {
         printExpr(p, e);
 }
 
+// Prints function declaration
 void printFunc(Printer& p, funcDecl const* d) {
     p.getStream() << "fun ";
 
@@ -39,11 +42,13 @@ void printFunc(Printer& p, funcDecl const* d) {
         printStmt(p, s);
 }
 
+// Prints program declaration
 void printProg(Printer& p, progDecl const* d) {
     for (Decl* member : *d)
         printDecl(p, member);
 }
 
+// Prints any declaration
 void printDecl(Printer& p, Decl const* d) {
     switch (d->getDeclKind()) {
         case Decl::myVarDecl:
