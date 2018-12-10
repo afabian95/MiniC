@@ -17,6 +17,7 @@ private:
 
 public:
     // Constructs symbol from string
+    Symbol() : myStr() { }
     Symbol(std::string const* str) : myStr(str) { }
     // Returns the spelling of the symbol
     std::string const& str() const { return *myStr; }
@@ -24,6 +25,8 @@ public:
     friend bool operator ==(Symbol a, Symbol b) { return a.myStr == b.myStr; }
     // Returns whether two symbols are not equal
     friend bool operator !=(Symbol a, Symbol b) { return a.myStr != b.myStr; }
+    // Returns the spelling of the name
+    char const* getString() const { return (*myStr).c_str(); }
 };
 
 // Stores the symbols
@@ -39,3 +42,13 @@ inline Symbol symbolTable::get(std::string const& str) {
 inline Symbol symbolTable::get(char const* str) {
     return &*emplace(str).first;
 }
+
+namespace std {
+    template<>
+    struct hash<::Symbol> {
+        std::size_t operator()(::Symbol symbol) const noexcept {
+            std::hash<std::string const*> h;
+            return h(&symbol.str());
+        }
+    };
+};

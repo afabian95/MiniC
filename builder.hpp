@@ -17,6 +17,7 @@ class Stmt;
 class Decl;
 class varDecl;
 class funcDecl;
+class Symbol;
 
 // The builder class for semantic analysis
 class Builder {
@@ -41,6 +42,7 @@ public:
     Type* getRefType(Type* t);
     // Returns the function type
     Type* getFuncType(std::initializer_list<Type*> const& ts);
+    Type* getFuncType(std::vector<Decl*> const& params, Type* type);
 
     // Expressions
     // Returns a new boolean literal
@@ -119,6 +121,8 @@ public:
     Stmt* makeDecl(Decl* d);
 
     // Declarations
+    // Returns a new name
+    Name* makeName(Symbol s);
     // Returns a new object or reference definition
     varDecl* makeVar(Name* n, Type* t);
     // Returns a new function definition

@@ -12,7 +12,7 @@ class Location {};
 
 class Token {
 public:
-    enum Kind {
+    enum Name {
     // punctuation
     myLBraceToken,  // [ token
     myRBraceToken,  // ] token
@@ -66,21 +66,25 @@ public:
   };
 
 private:
-    Kind myKind;
+    Name myName;
     Symbol myLex;
     Location myLoc;
 
 public:
-    Token(Kind k, Symbol sym, Location = {}) :
-        myKind(k), myLex(sym), myLoc() {}
+    Token() :
+        Token(myEOFToken, Symbol()) {}
+    Token(Name n, Symbol sym, Location = {}) :
+        myName(n), myLex(sym), myLoc() {}
 
     // Operators
     // Converts to true when this is not end of file
-    explicit operator bool() const { return myKind != myEOFToken; }
-    // Returns the kind of the token
-    Kind getTokenKind() const { return myKind; }
+    explicit operator bool() const { return myName != myEOFToken; }
+    // Returns the name of the token
+    Name getTokenName() const { return myName; }
     // Returns the spelling of the token
     Symbol getLexeme() const { return myLex; }
+    // Returns whether this is the same keyword
+    bool isSameAs(Name name) const { return myName == name; }
     // Returns whether this is a keyword
     bool isKeyword() const;
     // Returns whether this is a logical operator

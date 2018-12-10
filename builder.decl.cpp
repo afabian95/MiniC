@@ -6,6 +6,12 @@
 
 #include "builder.hpp"
 #include "decl.hpp"
+#include "name.hpp"
+#include "symbol.hpp"
+
+Name* Builder::makeName(Symbol s) {
+    return new Name(s.getString());
+}
 
 varDecl* Builder::makeVar(Name* n, Type* t) {
     return new varDecl(n, t);

@@ -10,8 +10,8 @@
 #include <iostream>
 
 // Converts tokens to strings
-static char const* str(Token::Kind k) {
-    switch (k) {
+static char const* str(Token::Name n) {
+    switch (n) {
         case Token::myLBraceToken: return "lbrace";
         case Token::myRBraceToken: return "rbrace";
         case Token::myLParenToken: return "lparen";
@@ -62,5 +62,5 @@ static char const* str(Token::Kind k) {
 }
 
 std::ostream& operator<<(std::ostream& os, Token const& t) {
-    return os << "<" << str(t.getTokenKind()) << ">";
+    return os << "<" << str(t.getTokenName()) << ">";
 }

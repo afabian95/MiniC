@@ -122,6 +122,11 @@ Expr* Builder::makeNeg(Expr* e1) {
     return new negationExpr(e1->getType(), e1);
 }
 
+Expr* Builder::makeRec(Expr* e1) {
+    e1 = requireArmtc(e1);
+    return new reciprocalExpr(e1->getType(), e1);
+}
+
 Expr* Builder::makeAssign(Expr* e1, Expr* e2) {
     e2 = convertToVal(e2);
     e1 = requireRefTo(e1, e2->getType());

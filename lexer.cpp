@@ -95,10 +95,10 @@ char Lexer::peek(int n) const {
     return *(myFirst + n);
 }
 
-Token Lexer::match(Token::Kind k, int len) {
+Token Lexer::match(Token::Name n, int len) {
     std::string str(myFirst, myFirst + len);
     Symbol symb = mySymbs->get(str);
-    Token tok = Token(k, symb);
+    Token tok = Token(n, symb);
     myFirst += len;
     return tok;
 }
@@ -128,10 +128,10 @@ Token Lexer::matchWord() {
     std::string id(myFirst, word);
     Symbol symb = mySymbs->get(id);
 
-    Token::Kind kind;
+    Token::Name name;
     auto kw = myKWs.find(id);
-    kind = kw->second;
-    return Token(kind, symb);
+    name = kw->second;
+    return Token(name, symb);
 }
 
 Token Lexer::matchNumber() {

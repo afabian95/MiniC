@@ -174,7 +174,7 @@ public:
     // Sets the body of the function
     Stmt* getBody() const { return myBody; }
     // Sets the body of the function
-    void setBody(Stmt* s);
+    void setBody(Stmt* s) { myBody = s; }
 };
 inline funcDecl::funcDecl(Name* n, Type* t, std::initializer_list<Decl*> ops, Stmt* s) :
     karyDecl(myFuncDecl, ops), valDecl(n, t), myBody(s) {}

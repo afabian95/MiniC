@@ -25,7 +25,7 @@ private:
     char const* myFirst;
     char const* myLimit;
     int myLine;
-    std::unordered_map<std::string, Token::Kind> myKWs;
+    std::unordered_map<std::string, Token::Name> myKWs;
 
 public:
     // True if all input is consumed
@@ -46,7 +46,7 @@ public:
     // Returns whether the current character is a hex digit
     bool isHexDigit(char c);
     // Returns the token that matches the string
-    Token match(Token::Kind k, int len);
+    Token match(Token::Name n, int len);
     // Returns the token that matches the number
     Token matchNumber();
     // Returns the token that matches the word
